@@ -11,6 +11,7 @@ function Params = SetParams(inParams, ParamsNumber, LogLanguage)
             'Mapper', ...
             'Sig', ...
             'Channel', ...
+            'ChEstimator', ...
             'BER', ...
             'Common' ...
         };
@@ -258,6 +259,22 @@ function Channel = SetParamsChannel(inChannel, ParamsNumber, ...
         if ~isfield(Channel, 'Seed')
             Channel.Seed = 1;
         end
+end
+function ChEstimator = SetParamsChEstimator(inChEstimator, ParamsNumber, ...
+    LogLanguage) %#ok<INUSL,DEFNU>
+
+    % Пересохраним входные данные
+        ChEstimator = inChEstimator;
+
+    % Нужно ли пропускать сигнал через канал
+        if ~isfield(ChEstimator, 'isTransparent')
+            ChEstimator.isTransparent = true;
+        end
+
+    % Тип оценки канала: 'Ideal' | 'Pilots'
+        if ~isfield(ChEstimator, 'Type')
+            ChEstimator.Type = 'Ideal';
+        end 
 end
 function BER = SetParamsBER(inBER, ParamsNumber, ...
     LogLanguage) %#ok<INUSD,DEFNU>

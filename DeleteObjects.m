@@ -9,7 +9,8 @@ function DeleteObjects(Objs, Ruler)
         delete(Objs{k}.Interleaver);
         delete(Objs{k}.Mapper);
         delete(Objs{k}.Sig);
-        delete(Objs{k}.Channel);
+        delete(Objs{k}.Channel); 
+        delete(Objs{k}.ChEstimator);
         delete(Objs{k}.Stat);
     end
     

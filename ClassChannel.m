@@ -81,6 +81,9 @@
                     InData     = FadeSignal.';
                 end
 
+            % —охранение сигнала до того, как он прошел через шум
+                InstChannelParams.FadedSignal = FadeSignal.';
+
             % —читаем мощность сигнала                
                 Ps  = mean(abs(InData).^2);
                 Pb  = Ps / obj.log2M;

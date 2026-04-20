@@ -152,6 +152,10 @@ function Objs = LoopFun(inObjs, Ruler, WorkerNum)
                 [Frame.RxSignal, InstChannelParams] = Objs.Channel.Step(...
                     Frame.TxSignal, Ruler.h2dB);
 
+            % Оценка канала
+                Frame.H = Objs.ChEstimator.Step(...
+                    Frame.TxSignal, InstChannelParams.FadedSignal);
+
             % Приёмник
                 % Обработка принятого сигнала - вычисление модуляционных
                 % символов
