@@ -104,7 +104,7 @@ classdef ClassSig < handle
                 end
 
                 % IFFT и добавление циклического префикса 
-                    tdSymOFDM    = ifft(ifftshift(SymOFDM)) * sqrt(obj.NumFFT / obj.NumSC* obj.NumFFT );
+                    tdSymOFDM    = ifft(ifftshift(SymOFDM)) * sqrt(obj.NumFFT);
                     CyclicPrefix = tdSymOFDM( end - obj.LenCP + 1 : end );
                     FrameOFDM(:, symIdx) = [ CyclicPrefix; tdSymOFDM ];
             end
@@ -133,7 +133,7 @@ classdef ClassSig < handle
             for symIdx = 1 : obj.LenFrame
                 % Удаление CP и FFT 
                     Sym   = RxFrame( obj.LenCP + 1 : end, symIdx );
-                    fdSym = fftshift( fft( Sym ) ) / sqrt(obj.NumFFT / obj.NumSC* obj.NumFFT );
+                    fdSym = fftshift( fft( Sym ) ) / sqrt(obj.NumFFT);
 
                 if ismember(symIdx, obj.pilotFlags)
                     allIdx   = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;

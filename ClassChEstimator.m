@@ -26,7 +26,7 @@ classdef ClassChEstimator < handle
                 H = ones(obj.NumSC, obj.LenFrame);
                 return;
             end
-
+    
             TxFrame    = reshape(TxSignal(:), ... 
                 obj.NumFFT + obj.LenCP, obj.LenFrame);
             FadedFrame = reshape(FadedSignal(:), ... 

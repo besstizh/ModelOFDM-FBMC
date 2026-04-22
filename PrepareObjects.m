@@ -15,6 +15,7 @@ function [Objs, Ruler] = PrepareObjects(Params, ParamsNum, NumParams, ...
             Objs{k}.Sig         = ClassSig(Params, LogLanguage);
             Objs{k}.Channel     = ClassChannel(Params, Objs{k}, LogLanguage);
             Objs{k}.ChEstimator = ClassChEstimator(Params, Objs{k}, LogLanguage);
+            Objs{k}.Equalizer   = ClassEqualizer(Params, Objs{k}, LogLanguage);
             Objs{k}.Stat        = ClassStat(LogLanguage);
         end
     
