@@ -55,7 +55,7 @@ classdef ClassEqualizer < handle
                         Symbol   = CPSymbol(obj.LenCP + 1: end);
                     % FFT
                         fdSymbol = ...
-                            fftshift( fft( Symbol ) ); % / sqrt(obj.NumFFT);
+                            fftshift( fft( Symbol ) ) / sqrt(obj.NumFFT);
                     % Выделяю индексы поднесущих 
                         scIdx    = (obj.NumGI + 1: obj.NumFFT - obj.NumGI);
                     % Создаю копию символа, которую буду менять
@@ -64,7 +64,7 @@ classdef ClassEqualizer < handle
                         EqSymbol(scIdx) = fdSymbol(scIdx) ./ H(:, symIdx);
                     % IFFT 
                         tdEqSymbol = ...
-                            ifft( ifftshift( EqSymbol ) ); % * sqrt(obj.NumFFT);
+                            ifft( ifftshift( EqSymbol ) ) * sqrt(obj.NumFFT);
                     % Заменяю в исходном символе часть после ЦП
                         CPSymbol(obj.LenCP + 1: end) = tdEqSymbol;
                     % Помещаю эквализированный символ в выходной массив
@@ -74,10 +74,10 @@ classdef ClassEqualizer < handle
                 OutData = OutData(:).';
  
             % Дисперсия шума после эквализации
-            % После FFT дисперсия умножается на NumFFT
+            % После FFT дисперсия умножается на NumFFT (уже не умножвется)
             % После деления на H делится на |H|^2
                 NoiseVar = ...
-                    Variance * obj.NumFFT ./ (abs(H).^2);
+                    Variance  ./ (abs(H).^2);
         end
     end
 end

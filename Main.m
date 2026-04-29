@@ -3,7 +3,7 @@ function Main(FirstParamsNum, Step4ParamsNum, LogLanguage)
 % √лавный запускаемый файл модели
 %   ¬ходных переменных может быть 0, 1, 2 или 3. «начени€ по умолчанию:
 %       FirstParamsNum = 1;
-%       Step4ParamsNum = 1;
+%       Step4ParamsNum = 1; 
 %       LogLanguage = 'Russian'.
 %
 % ¬ходные переменные:

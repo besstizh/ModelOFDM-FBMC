@@ -94,7 +94,7 @@
 
             % Сформируем АБГШ
                 Sigma = sqrt(Pbd / obj.SNRcoeff * 10^(-h2dB/10) / 2);
-                InstChannelParams.Variance = 2*Sigma^2 / Ps;
+                InstChannelParams.Variance = 2*Sigma^2; % / Ps;
                 Noise = ( randn( size(InData) ) + 1i * randn( size(InData) ))* Sigma;
 
             % Добавим его к сигналу
