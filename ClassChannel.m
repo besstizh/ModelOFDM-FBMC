@@ -78,6 +78,9 @@
                     cfg.SamplingRate    = obj.SamplingRate;
                     cfg.InitTime        = 0; % сброс состояния канала
                     cfg.Seed            = obj.Seed;
+
+                    % Сохранение исходного Тх-сигнала ДО канала
+                        InstChannelParams.TxSignal = InData;
     
                     InData = InData.';
                     FadeSignal = lteFadingChannel(cfg, InData);
