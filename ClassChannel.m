@@ -65,7 +65,7 @@
         function [OutData, InstChannelParams] = Step(obj, InData, h2dB)
             if obj.isTransparent
                 OutData = InData;
-                InstChannelParams.Variance = 1;
+                InstChannelParams.NoiseVar = 1;
                 return
             end
              
@@ -94,7 +94,7 @@
 
             % Сформируем АБГШ
                 Sigma = sqrt(Pbd / obj.SNRcoeff * 10^(-h2dB/10) / 2);
-                InstChannelParams.Variance = 2*Sigma^2; % / Ps;
+                InstChannelParams.NoiseVar = 2*Sigma^2; 
                 Noise = ( randn( size(InData) ) + 1i * randn( size(InData) ))* Sigma;
 
             % Добавим его к сигналу

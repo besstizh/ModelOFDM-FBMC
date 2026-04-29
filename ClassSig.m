@@ -112,7 +112,7 @@ classdef ClassSig < handle
             % Вытягивание в строку и нормировка
                 OutData = FrameOFDM(:).';
         end
-        function [OutData, DataNoiseVar] = StepRx(obj, InData, NoiseVar)
+        function [OutData, NoiseVar] = StepRx(obj, InData, NoiseVarIn)
             if obj.isTransparent
                 OutData = InData;
                 return
@@ -126,7 +126,7 @@ classdef ClassSig < handle
                 NumDCperFrame = obj.CutNumDCperSym * length(obj.pilotFlags) + ...
                                 obj.NumSC * (obj.LenFrame - length(obj.pilotFlags));
                 RxDataSyms    = zeros(NumDCperFrame, 1);
-                DataNoiseVar  = zeros( size( RxDataSyms ) );
+                NoiseVar  = zeros( size( RxDataSyms ) );
 
                 Pntr     = 1;
                 pFlagIdx = 1;
@@ -147,16 +147,16 @@ classdef ClassSig < handle
 
                     RxDataSyms(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
                         fdSym(dataIdx);
-                    DataNoiseVar(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
-                        NoiseVar(dataIdx - obj.NumGI, symIdx);
+                    NoiseVar(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
+                        NoiseVarIn(dataIdx - obj.NumGI, symIdx);
 
                     pFlagIdx = pFlagIdx + 1;
                     Pntr = Pntr + obj.CutNumDCperSym; 
                 else
                     scIdxs = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
                     RxDataSyms(Pntr : Pntr + obj.NumSC - 1) = fdSym(scIdxs);
-                    DataNoiseVar(Pntr : Pntr + obj.NumSC - 1) = ...
-                        NoiseVar(:, symIdx);                    
+                    NoiseVar(Pntr : Pntr + obj.NumSC - 1) = ...
+                        NoiseVarIn(:, symIdx);                    
 
                     Pntr = Pntr + obj.NumSC; 
                 end

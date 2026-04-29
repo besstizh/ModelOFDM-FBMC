@@ -22,10 +22,10 @@ classdef ClassEqualizer < handle
             obj.LogLanguage   = LogLanguage;
         end
 
-        function [OutData, NoiseVar] = Step(obj, InData, H, Variance)
+        function [OutData, NoiseVar] = Step(obj, InData, H, NoiseVar)
             if obj.isTransparent
                 OutData  = InData;
-                NoiseVar = Variance * ones( size( InData ) );
+                NoiseVar = NoiseVar * ones( size( InData ) );
                 return;
             end
             % ZF эквализация: поэлементное деление на H
@@ -77,7 +77,7 @@ classdef ClassEqualizer < handle
             % После FFT дисперсия умножается на NumFFT (уже не умножвется)
             % После деления на H делится на |H|^2
                 NoiseVar = ...
-                    Variance  ./ (abs(H).^2);
+                    NoiseVar  ./ (abs(H).^2);
         end
     end
 end

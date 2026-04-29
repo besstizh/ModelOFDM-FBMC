@@ -151,27 +151,26 @@ function Objs = LoopFun(inObjs, Ruler, WorkerNum)
             % Канал
                 [Frame.RxSignal, InstChannelParams] = Objs.Channel.Step(...
                     Frame.TxSignal, Ruler.h2dB);
-            
-            if strcmp(Objs.Channel.Type, 'Fading')
-                % Оценка канала
+
+            % Оценка канала и эквалайзер
+                if strcmp(Objs.Channel.Type, 'Fading')
                     Frame.H = Objs.ChEstimator.Step(...
                         Frame.TxSignal, InstChannelParams.FadedSignal);
-
-                % Эквалайзер 
+                    
                     [Frame.EqSignal, InstChannelParams.NoiseVar]  = ...
                         Objs.Equalizer.Step(...
-                        Frame.RxSignal, Frame.H, InstChannelParams.Variance ...
+                        Frame.RxSignal, Frame.H, InstChannelParams.NoiseVar ...
                         );
-            else
-                Frame.EqSignal = Frame.RxSignal;
-                InstChannelParams.NoiseVar = InstChannelParams.Variance * ...
-                    ones(Objs.Sig.NumSC, Objs.Sig.LenFrame);
-            end
+                else
+                    Frame.EqSignal = Frame.RxSignal;
+                    InstChannelParams.NoiseVar = InstChannelParams.NoiseVar * ...
+                        ones(Objs.Sig.NumSC, Objs.Sig.LenFrame);
+                end
 
             % Приёмник
                 % Обработка принятого сигнала - вычисление модуляционных
                 % символов
-                    [Frame.RxModSymbols, InstChannelParams.NoiseVariance] = ...
+                    [Frame.RxModSymbols, InstChannelParams.NoiseVar] = ...
                         Objs.Sig.StepRx(Frame.EqSignal, InstChannelParams.NoiseVar);
 
                 % Демодуляция

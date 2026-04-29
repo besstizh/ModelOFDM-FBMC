@@ -109,54 +109,54 @@ Common.SaveDirName     = 'Fading_Results';
 Common.SaveFileName    = 'OFDM_EPA5_16QAM_IdealEq';
 % End of Params
 
-% EVA70 Идеальная оценка канала
-Mapper.isTransparent   = false;
-Encoder.isTransparent  = false;
-Interleaver.isTransparent = false;
-Channel.isTransparent  = false;
-Channel.Type           = 'Fading';
-Channel.FadingType     = 'EVA';
-Channel.DopplerFreq    = 70;
-Mapper.ModulationOrder = 16;
-Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
-ChEstimator.isTransparent = false;
-ChEstimator.Type       = 'Ideal';
-Equalizer.isTransparent = false;
-Equalizer.Type         = 'ZF';
-
-BER.h2dBInit           = 0;
-BER.h2dBInitStep       = 1;
-BER.h2dBMaxStep        = 2;
-BER.h2dBMinStep        = 0.5;
-BER.h2dBMax            = 25;
-Common.NumWorkers      = 6;
-Common.NumOneIterFrames = 120;
-Common.SaveDirName     = 'Fading_Results';
-Common.SaveFileName    = 'OFDM_EVA70_16QAM_IdealEq';
-% End of Params
-
-% ETU300 Идеальная оценка канала
-Mapper.isTransparent   = false;
-Encoder.isTransparent  = false;
-Interleaver.isTransparent = false;
-Channel.isTransparent  = false;
-Channel.Type           = 'Fading';
-Channel.FadingType     = 'ETU';
-Channel.DopplerFreq    = 300;
-Mapper.ModulationOrder = 16;
-Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
-ChEstimator.isTransparent = false;
-ChEstimator.Type       = 'Ideal';
-Equalizer.isTransparent = false;
-Equalizer.Type         = 'ZF';
-
-BER.h2dBInit           = 0;
-BER.h2dBInitStep       = 1;
-BER.h2dBMaxStep        = 2;
-BER.h2dBMinStep        = 0.5;
-BER.h2dBMax            = 25;
-Common.NumWorkers      = 6;
-Common.NumOneIterFrames = 120;
-Common.SaveDirName     = 'Fading_Results';
-Common.SaveFileName    = 'OFDM_ETU300_16QAM_IdealEq';
-% End of Params
+% % EVA70 Идеальная оценка канала
+% Mapper.isTransparent   = false;
+% Encoder.isTransparent  = false;
+% Interleaver.isTransparent = false;
+% Channel.isTransparent  = false;
+% Channel.Type           = 'Fading';
+% Channel.FadingType     = 'EVA';
+% Channel.DopplerFreq    = 70;
+% Mapper.ModulationOrder = 16;
+% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+% ChEstimator.isTransparent = false;
+% ChEstimator.Type       = 'Ideal';
+% Equalizer.isTransparent = false;
+% Equalizer.Type         = 'ZF';
+% 
+% BER.h2dBInit           = 0;
+% BER.h2dBInitStep       = 1;
+% BER.h2dBMaxStep        = 2;
+% BER.h2dBMinStep        = 0.5;
+% BER.h2dBMax            = 25;
+% Common.NumWorkers      = 6;
+% Common.NumOneIterFrames = 120;
+% Common.SaveDirName     = 'Fading_Results';
+% Common.SaveFileName    = 'OFDM_EVA70_16QAM_IdealEq';
+% % End of Params
+% 
+% % ETU300 Идеальная оценка канала
+% Mapper.isTransparent   = false;
+% Encoder.isTransparent  = false;
+% Interleaver.isTransparent = false;
+% Channel.isTransparent  = false;
+% Channel.Type           = 'Fading';
+% Channel.FadingType     = 'ETU';
+% Channel.DopplerFreq    = 300;
+% Mapper.ModulationOrder = 16;
+% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+% ChEstimator.isTransparent = false;
+% ChEstimator.Type       = 'Ideal';
+% Equalizer.isTransparent = false;
+% Equalizer.Type         = 'ZF';
+% 
+% BER.h2dBInit           = 0;
+% BER.h2dBInitStep       = 1;
+% BER.h2dBMaxStep        = 2;
+% BER.h2dBMinStep        = 0.5;
+% BER.h2dBMax            = 25;
+% Common.NumWorkers      = 6;
+% Common.NumOneIterFrames = 120;
+% Common.SaveDirName     = 'Fading_Results';
+% Common.SaveFileName    = 'OFDM_ETU300_16QAM_IdealEq';
+% % End of Params
