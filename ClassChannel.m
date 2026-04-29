@@ -5,6 +5,7 @@
         log2M;
         NumFFT;
         Rate;
+        SNRcoeff;
         Type;
         DelayProfile;
         DopplerFreq;
@@ -29,6 +30,7 @@
             obj.log2M         = Objs.Mapper.log2M;
 
             obj.NumFFT        = Objs.Sig.NumFFT;
+            obj.SNRcoeff      = Params.Sig.SNRcoef;
 
             obj.Type            = Channel.Type;
             obj.DelayProfile    = Channel.FadingType;
@@ -77,12 +79,13 @@
                     cfg.InitTime        = 0; % сброс состояния канала
                     cfg.Seed            = obj.Seed;
     
-                    FadeSignal = lteFadingChannel(cfg, InData.');
+                    InData = InData.';
+                    FadeSignal = lteFadingChannel(cfg, InData);
                     InData     = FadeSignal.';
-                end
 
-            % Сохранение сигнала до того, как он прошел через шум
-                InstChannelParams.FadedSignal = FadeSignal.';
+                    % Сохранение сигнала до того, как он прошел через шум
+                        InstChannelParams.FadedSignal = FadeSignal.';
+                end
 
             % Считаем мощность сигнала                
                 Ps  = mean(abs(InData).^2);
@@ -90,7 +93,7 @@
                 Pbd = Pb /  obj.Rate;
 
             % Сформируем АБГШ
-                Sigma = sqrt(Pbd * 10^(-h2dB/10) / 2);
+                Sigma = sqrt(Pbd / obj.SNRcoeff * 10^(-h2dB/10) / 2);
                 InstChannelParams.Variance = 2*Sigma^2 / Ps;
                 Noise = ( randn( size(InData) ) + 1i * randn( size(InData) ))* Sigma;
 

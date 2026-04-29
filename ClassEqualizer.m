@@ -1,6 +1,6 @@
 classdef ClassEqualizer < handle
     properties (SetAccess = private)
-        isTransparant;
+        isTransparent;
         Type;
         NumFFT;
         NumSC;
@@ -12,7 +12,7 @@ classdef ClassEqualizer < handle
     methods
         function obj = ClassEqualizer(Params, Objs, LogLanguage)
             Equalizer         = Params.Equalizer;
-            obj.isTransparant = Equalizer.isTransparant;
+            obj.isTransparent = Equalizer.isTransparent;
             obj.Type          = Equalizer.Type;          
             obj.NumFFT        = Objs.Sig.NumFFT;
             obj.NumSC         = Objs.Sig.NumSC;
@@ -23,7 +23,7 @@ classdef ClassEqualizer < handle
         end
 
         function [OutData, NoiseVar] = Step(obj, InData, H, Variance)
-            if obj.isTransparant
+            if obj.isTransparent
                 OutData  = InData;
                 NoiseVar = Variance * ones( size( InData ) );
                 return;
@@ -45,7 +45,7 @@ classdef ClassEqualizer < handle
             % ) перезаписываю матрицу InData 
             % ) вытягиваю в вектор и подаю на выход 
             % ) пересчитываю дисперсию
-                InData = reshape(Indata, obj.LenCP + obj.NumFFT, obj.LenFrame);
+                InData = reshape(InData, obj.LenCP + obj.NumFFT, obj.LenFrame);
                 OutData = zeros(size(InData));
 
                 for symIdx = 1 : obj.LenFrame
@@ -55,7 +55,7 @@ classdef ClassEqualizer < handle
                         Symbol   = CPSymbol(obj.LenCP + 1: end);
                     % FFT
                         fdSymbol = ...
-                            fftshift( fft( Symbol ) ) / sqrt(obj.NumFFT);
+                            fftshift( fft( Symbol ) ); % / sqrt(obj.NumFFT);
                     % Выделяю индексы поднесущих 
                         scIdx    = (obj.NumGI + 1: obj.NumFFT - obj.NumGI);
                     % Создаю копию символа, которую буду менять
@@ -64,7 +64,7 @@ classdef ClassEqualizer < handle
                         EqSymbol(scIdx) = fdSymbol(scIdx) ./ H(:, symIdx);
                     % IFFT 
                         tdEqSymbol = ...
-                            ifft( ifftshift( EqSymbol ) ) * sqrt(obj.NumFFT);
+                            ifft( ifftshift( EqSymbol ) ); % * sqrt(obj.NumFFT);
                     % Заменяю в исходном символе часть после ЦП
                         CPSymbol(obj.LenCP + 1: end) = tdEqSymbol;
                     % Помещаю эквализированный символ в выходной массив

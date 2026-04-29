@@ -76,10 +76,12 @@ classdef ClassMapper < handle
                     'UnitAveragePower', true);
 
             elseif strcmp(obj.DecisionMethod, 'Approximate log-likelihood ratio')
-                OutData = -qamdemod(InData, obj.ModulationOrder, ...
+                NoiseVar = InstChannelParams.NoiseVariance;
+                OutData = -qamdemod(InData.', obj.ModulationOrder, ...
                     'OutputType', 'llr', ...
                     'UnitAveragePower', true, ...
-                    'NoiseVariance', InstChannelParams.Variance);
+                    'NoiseVariance', NoiseVar.');
+                OutData = OutData(:);
             end
         end
     end

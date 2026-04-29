@@ -12,6 +12,7 @@ function Params = SetParams(inParams, ParamsNumber, LogLanguage)
             'Sig', ...
             'Channel', ...
             'ChEstimator', ...
+            'Equalizer', ...
             'BER', ...
             'Common' ...
         };
@@ -266,9 +267,9 @@ function ChEstimator = SetParamsChEstimator(inChEstimator, ParamsNumber, ...
     % Пересохраним входные данные
         ChEstimator = inChEstimator;
 
-    % Нужно ли пропускать сигнал через канал
+    % Нужно ли выполнять оценку канала
         if ~isfield(ChEstimator, 'isTransparent')
-            ChEstimator.isTransparent = false;
+            ChEstimator.isTransparent = true;
         end
 
     % Тип оценки канала: 'Ideal' | 'Pilots'
@@ -280,16 +281,16 @@ function Equalizer = SetParamsEqualizer(inEqualizer, ParamsNumber, ...
     LogLanguage) %#ok<INUSL,DEFNU>
 
     % Пересохраним входные данные
-        ChEstimator = inEqualizer;
+        Equalizer = inEqualizer;
 
-    % Нужно ли пропускать сигнал через канал
+    % Нужно ли выполнять эквализацию
         if ~isfield(Equalizer, 'isTransparent')
-            ChEstimator.isTransparent = false;
+            Equalizer.isTransparent = true;
         end
 
     % Тип эквалайзера: 'ZF' | 'MMSE'
         if ~isfield(Equalizer, 'Type')
-            ChEstimator.Type = 'ZF';
+            Equalizer.Type = 'ZF';
         end 
 end
 function BER = SetParamsBER(inBER, ParamsNumber, ...

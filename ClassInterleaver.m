@@ -32,7 +32,7 @@ classdef ClassInterleaver < handle
                 OutData = InData;
                 return
             end
-            Len                       = length(InData);
+            Len                       = length(obj.IntrlvIdx);
             DeintrlvIdx               = zeros(1, Len);
             DeintrlvIdx(obj.IntrlvIdx) = 1 : Len;
             OutData                   = InData(DeintrlvIdx);

@@ -46,6 +46,10 @@ function Params = CalcAndCheckParams(inParams, LogLanguage)
         Params.Sig.NumBits4DC = ...
             NumDCperFrame * log2(Params.Mapper.ModulationOrder);
 
+    % Коэффициент учитывающий рассеивание энергии
+        Params.Sig.SNRcoef = ( NumDCperFrame / ...
+            (Params.Sig.NumSC * Params.Sig.LenFrame) ) * ...
+            ( Params.Sig.NumFFT / (Params.Sig.NumFFT + Params.Sig.LenCP) );
 % Вычисляемые параметры Encoder 
     if ~Params.Encoder.isTransparent
         % Количество бит на входе кодера за один кадр 
