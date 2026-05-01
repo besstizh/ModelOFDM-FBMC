@@ -94,7 +94,7 @@ Channel.DopplerFreq    = 5;
 Mapper.ModulationOrder = 16;
 Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
 ChEstimator.isTransparent = false;
-ChEstimator.Type       = 'Ideal';
+ChEstimator.Type       = 'Pilots';
 Equalizer.isTransparent = false;
 Equalizer.Type         = 'ZF';
 
@@ -105,8 +105,8 @@ BER.h2dBMinStep        = 0.5;
 BER.h2dBMax            = 25;
 Common.NumWorkers      = 6;
 Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'Fading_Results';
-Common.SaveFileName    = 'OFDM_EPA5_16QAM_IdealEq';
+Common.SaveDirName     = 'Fading_Results';
+Common.SaveFileName    = 'OFDM_EPA5_16QAM_PilotsEq';
 % End of Params
 
 % % EVA70 Идеальная оценка канала

@@ -81,8 +81,54 @@ classdef ClassChEstimator < handle
         end
 
         function H = estimatePilots(obj, RxSignal)
-            % Пока не реализовано
-            error('Стоит обождать маленько');
+            % Собираю кадр 
+                RxFrame = reshape(RxSignal(:), ...
+                    obj.NumFFT + obj.LenCP, obj.LenFrame);
+
+            % Выделяю активные поднесущие
+                activeIdx = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
+
+            % Переиндексирую пилоты в координаты активной сетки
+                pIdxLocal      = obj.pIdx      - obj.NumGI;
+                pIdxShiftLocal = obj.pIdxShift - obj.NumGI;
+
+            % Хранение оценок H на пилотных символах 
+                NumPilotSyms = length(obj.pilotFlags);
+                H_at_pilot_syms = zeros(obj.NumSC, NumPilotSyms);
+
+            % LS-оценка и интерполяция по частоте
+                for ps = 1 : NumPilotSyms
+                    symIdx = obj.pilotFlags(ps);
+
+                    % FFT принятного пилотного символа
+                        Sym   = RxFrame(obj.LenCP + 1 : end, symIdx);
+                        fdSym = fftshift( fft(Sym) ) / sqrt(obj.NumFFT);
+                        fdAct = fdSym(activeIdx);
+
+                    % Определяю позиции пилотов и переданные значения
+                        startIdx = (ps - 1) * obj.NumPCperSym + 1;
+                        endIdx   =  ps      * obj.NumPCperSym;
+                        txPilots = obj.PilotSyms(startIdx : endIdx);
+
+                        if ismember(symIdx, obj.PilotNumbersOdd)
+                            pPosLocal = pIdxLocal;
+                        else
+                            pPosLocal = pIdxShiftLocal;
+                        end
+
+                    % LS-оценка на пилотных позициях 
+                        H_LS = fdAct(pPosLocal) ./ txPilots;
+
+                    % Линейная интерполяция по частоте на все NumSC
+                        H_at_pilot_syms(:, ps) = interp1( ...
+                            pPosLocal, H_LS, 1:obj.NumSC, ...
+                            'linear', 'extrap').';
+                end
+
+            % Интерполяция по времени 
+                H = interp1( ...
+                    obj.pilotFlags, H_at_pilot_syms.', 1:obj.LenFrame, ...
+                    'linear', 'extrap').';
         end
     end
 end
