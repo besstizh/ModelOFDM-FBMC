@@ -209,6 +209,11 @@ function Sig = SetParamsSig(inSig, ParamsNumber, ...
             Sig.PilotModOrder = 4;
         end
 
+    % Ѕуст пилотов
+        if ~isfield(Sig, 'PilotBoost')
+            Sig.PilotBoost = 1;
+        end        
+
     % —ледующие переменные вычисл€ютс€ в CalcAndCheckParams:
     % NumGI, NumPCperSym, PilotNumbersOdd, PilotNumbersEven, 
     % pilotFlags, NumPC, NumBits4PC, CutNumDCpersSym, NumBits4DC

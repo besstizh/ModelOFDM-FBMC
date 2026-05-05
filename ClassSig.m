@@ -8,6 +8,7 @@ classdef ClassSig < handle
         StepPC;
         PilotModOrder;
         LogLanguage;
+        PilotBoost;
     end
     properties (SetAccess = private) % Вычисляемые переменные
         NumGI;
@@ -19,6 +20,8 @@ classdef ClassSig < handle
         pIdx;       % индексы пилотных поднесущих без сдвига
         pIdxShift;  % индексы пилотных поднесущих со сдвигом
         PilotSyms;  % эталонные пилотные символы
+        PilotAmp;
+        DataAmpOnPilotSym;
     end
     methods
         function obj = ClassSig(Params, LogLanguage) % Конструктор
@@ -33,6 +36,7 @@ classdef ClassSig < handle
                 obj.LenFrame      = Sig.LenFrame;
                 obj.StepPC        = Sig.StepPC;
                 obj.PilotModOrder = Sig.PilotModOrder;
+                obj.PilotBoost    = Sig.PilotBoost;
                 obj.LogLanguage   = LogLanguage;
 
             % Вычисляемые параметры
@@ -59,6 +63,23 @@ classdef ClassSig < handle
                 PilotBits     = ( mseq( 1 : NumBits4PC ) + 1 ) / 2;
                 obj.PilotSyms = qammod( PilotBits, obj.PilotModOrder, ...
                                     'InputType', 'bit' );
+
+            % Расчет амплитуд для буста пилотов 
+                % Коэффициент мощности пилотов 
+                    beta  = obj.PilotBoost;
+                    Np    = obj.NumPCperSym;
+                    Nd    = obj.CutNumDCperSym;
+                % Компенсирующий коэффициент мощности данных 
+                    alpha = 1 - Np * (beta - 1) / Nd;
+
+                    if alpha <= 0
+                        error(['ClassSig: слишком большой PilotBoost (%g)' ...
+                            'Для текущих NumPCperSym=%d и CutNumDCperSym=%d ' ...
+                            'максимально допустимый PilotBoost < %g.'], beta, Np, Nd, 1 + Nd/Np);
+                    end
+
+                    obj.PilotAmp          = sqrt(beta);
+                    obj.DataAmpOnPilotSym = sqrt(alpha);
         end
         function OutData = StepTx(obj, InData)
             if obj.isTransparent
@@ -84,15 +105,15 @@ classdef ClassSig < handle
                     % Заполнение пилотами
                         if ismember(symIdx, obj.PilotNumbersOdd)
                             SymOFDM(obj.pIdx) = ...
-                                obj.PilotSyms(startIdx : endIdx);
+                                obj.PilotAmp * obj.PilotSyms(startIdx : endIdx);
                         else
                             SymOFDM(obj.pIdxShift) = ...
-                                obj.PilotSyms(startIdx : endIdx);
+                                obj.PilotAmp * obj.PilotSyms(startIdx : endIdx);
                         end
                     % Заполнение данными 
                         allIdx  = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
                         freeIdx = allIdx( SymOFDM( allIdx ) == 0 );
-                        SymOFDM( freeIdx ) = ...
+                        SymOFDM( freeIdx ) = obj.DataAmpOnPilotSym * ...
                             InData( Pntr : Pntr + obj.CutNumDCperSym - 1 );
 
                         pFlagIdx = pFlagIdx + 1;
@@ -146,9 +167,9 @@ classdef ClassSig < handle
                     end
 
                     RxDataSyms(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
-                        fdSym(dataIdx);
+                        fdSym(dataIdx) / obj.DataAmpOnPilotSym;
                     NoiseVar(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
-                        NoiseVarIn(dataIdx - obj.NumGI, symIdx);
+                        NoiseVarIn(dataIdx - obj.NumGI, symIdx) / obj.DataAmpOnPilotSym^2;
 
                     pFlagIdx = pFlagIdx + 1;
                     Pntr = Pntr + obj.CutNumDCperSym; 

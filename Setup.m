@@ -83,14 +83,40 @@
 % % End of Params
 
 
-% EPA5 идеальная оценка канала 
+% % EPA5 пилотная оценка канала 
+% Mapper.isTransparent   = false;
+% Encoder.isTransparent  = false;
+% Interleaver.isTransparent = false;
+% Channel.isTransparent  = false;
+% Channel.Type           = 'Fading';
+% Channel.FadingType     = 'EPA';
+% Channel.DopplerFreq    = 5;
+% Mapper.ModulationOrder = 16;
+% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+% ChEstimator.isTransparent = false;
+% ChEstimator.Type       = 'Pilots';
+% Equalizer.isTransparent = false;
+% Equalizer.Type         = 'ZF';
+% 
+% BER.h2dBInit           = 0;
+% BER.h2dBInitStep       = 1;
+% BER.h2dBMaxStep        = 2;
+% BER.h2dBMinStep        = 0.5;
+% BER.h2dBMax            = 25;
+% Common.NumWorkers      = 6;
+% Common.NumOneIterFrames = 120;
+% Common.SaveDirName     = 'Fading_Results';
+% Common.SaveFileName    = 'OFDM_EPA5_16QAM_PilotsEq';
+% % End of Params
+
+% EVA70 пилотная оценка канала 
 Mapper.isTransparent   = false;
 Encoder.isTransparent  = false;
 Interleaver.isTransparent = false;
 Channel.isTransparent  = false;
 Channel.Type           = 'Fading';
-Channel.FadingType     = 'EPA';
-Channel.DopplerFreq    = 5;
+Channel.FadingType     = 'EVA';
+Channel.DopplerFreq    = 70;
 Mapper.ModulationOrder = 16;
 Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
 ChEstimator.isTransparent = false;
@@ -103,10 +129,36 @@ BER.h2dBInitStep       = 1;
 BER.h2dBMaxStep        = 2;
 BER.h2dBMinStep        = 0.5;
 BER.h2dBMax            = 25;
-Common.NumWorkers      = 6;
+Common.NumWorkers      = 4;
 Common.NumOneIterFrames = 120;
 Common.SaveDirName     = 'Fading_Results';
-Common.SaveFileName    = 'OFDM_EPA5_16QAM_PilotsEq';
+Common.SaveFileName    = 'OFDM_EVA70_16QAM_PilotsEq';
+% End of Params
+
+% ETU300 пилотная оценка канала 
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'ETU';
+Channel.DopplerFreq    = 300;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'Fading_Results';
+Common.SaveFileName    = 'OFDM_ETU300_16QAM_PilotsEq';
 % End of Params
 
 % % EVA70 Идеальная оценка канала
