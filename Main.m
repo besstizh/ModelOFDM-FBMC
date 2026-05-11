@@ -1,4 +1,4 @@
-function Main(FirstParamsNum, Step4ParamsNum, LogLanguage)
+ function Main(FirstParamsNum, Step4ParamsNum, LogLanguage)
    %
 % Главный запускаемый файл модели
 %   Входных переменных может быть 0, 1, 2 или 3. Значения по умолчанию:

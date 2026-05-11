@@ -1,122 +1,38 @@
-% % AWGN LLR
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = false;
-% Interleaver.isTransparent = false;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'AWGN';
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 20;
-% 
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'AWGN_Results';
-% Common.SaveFileName    = 'OFDM_AWGN_16QAM_LLR';
-% % End of Params
-% 
-% % AWGN HD
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = false;
-% Interleaver.isTransparent = false;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'AWGN';
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Hard decision';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 20;
-% 
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'AWGN_Results';
-% Common.SaveFileName    = 'OFDM_AWGN_16QAM_HD';
-% % End of Params
-% 
-% % AWGN Enc Off 
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = true;
-% Interleaver.isTransparent = false;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'AWGN';
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Hard decision';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 20;
-% 
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'AWGN_Results';
-% Common.SaveFileName    = 'OFDM_AWGN_16QAM_EncOff';
-% % End of Params
-% 
-% % AWGN Enc Off Int Off
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = true;
-% Interleaver.isTransparent = true;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'AWGN';
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Hard decision';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 20;
-% 
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'AWGN_Results';
-% Common.SaveFileName    = 'OFDM_AWGN_16QAM_EncOff_IntOff';
-% % End of Params
-
-
-% % EPA5 пилотная оценка канала 
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = false;
-% Interleaver.isTransparent = false;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'Fading';
-% Channel.FadingType     = 'EPA';
-% Channel.DopplerFreq    = 5;
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
-% ChEstimator.isTransparent = false;
-% ChEstimator.Type       = 'Pilots';
-% Equalizer.isTransparent = false;
-% Equalizer.Type         = 'ZF';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 25;
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'Fading_Results';
-% Common.SaveFileName    = 'OFDM_EPA5_16QAM_PilotsEq';
-% % End of Params
-
-% EVA70 пилотная оценка канала 
+% Бустинг пилотов
+% EPA5 идеальная оценка канала
 Mapper.isTransparent   = false;
 Encoder.isTransparent  = false;
 Interleaver.isTransparent = false;
 Channel.isTransparent  = false;
 Channel.Type           = 'Fading';
-Channel.FadingType     = 'EVA';
-Channel.DopplerFreq    = 70;
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Ideal';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_IdeadEq';
+% End of Params
+
+% EPA5 пилотная оценка канала
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
 Mapper.ModulationOrder = 16;
 Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
 ChEstimator.isTransparent = false;
@@ -131,24 +47,25 @@ BER.h2dBMinStep        = 0.5;
 BER.h2dBMax            = 25;
 Common.NumWorkers      = 4;
 Common.NumOneIterFrames = 120;
-Common.SaveDirName     = 'Fading_Results';
-Common.SaveFileName    = 'OFDM_EVA70_16QAM_PilotsEq';
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq';
 % End of Params
 
-% ETU300 пилотная оценка канала 
+% EPA5 пилотная оценка канала | Буст 1.5
 Mapper.isTransparent   = false;
 Encoder.isTransparent  = false;
 Interleaver.isTransparent = false;
 Channel.isTransparent  = false;
 Channel.Type           = 'Fading';
-Channel.FadingType     = 'ETU';
-Channel.DopplerFreq    = 300;
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
 Mapper.ModulationOrder = 16;
 Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
 ChEstimator.isTransparent = false;
 ChEstimator.Type       = 'Pilots';
 Equalizer.isTransparent = false;
 Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 1.5;
 
 BER.h2dBInit           = 0;
 BER.h2dBInitStep       = 1;
@@ -157,58 +74,222 @@ BER.h2dBMinStep        = 0.5;
 BER.h2dBMax            = 25;
 Common.NumWorkers      = 4;
 Common.NumOneIterFrames = 120;
-Common.SaveDirName     = 'Fading_Results';
-Common.SaveFileName    = 'OFDM_ETU300_16QAM_PilotsEq';
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_1.5';
 % End of Params
 
-% % EVA70 Идеальная оценка канала
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = false;
-% Interleaver.isTransparent = false;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'Fading';
-% Channel.FadingType     = 'EVA';
-% Channel.DopplerFreq    = 70;
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
-% ChEstimator.isTransparent = false;
-% ChEstimator.Type       = 'Ideal';
-% Equalizer.isTransparent = false;
-% Equalizer.Type         = 'ZF';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 25;
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'Fading_Results';
-% Common.SaveFileName    = 'OFDM_EVA70_16QAM_IdealEq';
-% % End of Params
-% 
-% % ETU300 Идеальная оценка канала
-% Mapper.isTransparent   = false;
-% Encoder.isTransparent  = false;
-% Interleaver.isTransparent = false;
-% Channel.isTransparent  = false;
-% Channel.Type           = 'Fading';
-% Channel.FadingType     = 'ETU';
-% Channel.DopplerFreq    = 300;
-% Mapper.ModulationOrder = 16;
-% Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
-% ChEstimator.isTransparent = false;
-% ChEstimator.Type       = 'Ideal';
-% Equalizer.isTransparent = false;
-% Equalizer.Type         = 'ZF';
-% 
-% BER.h2dBInit           = 0;
-% BER.h2dBInitStep       = 1;
-% BER.h2dBMaxStep        = 2;
-% BER.h2dBMinStep        = 0.5;
-% BER.h2dBMax            = 25;
-% Common.NumWorkers      = 6;
-% Common.NumOneIterFrames = 120;
-% Common.SaveDirName     = 'Fading_Results';
-% Common.SaveFileName    = 'OFDM_ETU300_16QAM_IdealEq';
-% % End of Params
+% EPA5 пилотная оценка канала | Буст 1.5
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 1.5;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_1.5';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 2
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 2;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_2';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 2.5
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 2.5;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_2.5';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 3
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 3;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_3';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 3.5
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 3.5;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_3.5';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 4
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 4;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_4';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 4.5
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 4.5;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_4.5';
+% End of Params
+
+% EPA5 пилотная оценка канала | Буст 5
+Mapper.isTransparent   = false;
+Encoder.isTransparent  = false;
+Interleaver.isTransparent = false;
+Channel.isTransparent  = false;
+Channel.Type           = 'Fading';
+Channel.FadingType     = 'EPA';
+Channel.DopplerFreq    = 5;
+Mapper.ModulationOrder = 16;
+Mapper.DecisionMethod  = 'Approximate log-likelihood ratio';
+ChEstimator.isTransparent = false;
+ChEstimator.Type       = 'Pilots';
+Equalizer.isTransparent = false;
+Equalizer.Type         = 'ZF';
+Sig.PilotBoost         = 5;
+
+BER.h2dBInit           = 0;
+BER.h2dBInitStep       = 1;
+BER.h2dBMaxStep        = 2;
+BER.h2dBMinStep        = 0.5;
+BER.h2dBMax            = 25;
+Common.NumWorkers      = 4;
+Common.NumOneIterFrames = 120;
+Common.SaveDirName     = 'PilotBoosting';
+Common.SaveFileName    = 'EPA5_16QAM_PilotEq_Boost_5';
+% End of Params

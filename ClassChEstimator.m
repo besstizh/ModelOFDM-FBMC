@@ -17,6 +17,7 @@ classdef ClassChEstimator < handle
         PilotNumbersOdd;
         PilotNumbersEven;
         NumPCperSym;
+        PilotAmp;
     end
     methods
         function obj = ClassChEstimator(Params, Objs, LogLanguage)
@@ -38,6 +39,7 @@ classdef ClassChEstimator < handle
             obj.PilotNumbersOdd  = Objs.Sig.PilotNumbersOdd;
             obj.PilotNumbersEven = Objs.Sig.PilotNumbersEven;
             obj.NumPCperSym      = Objs.Sig.NumPCperSym;
+            obj.PilotAmp         = Objs.Sig.PilotAmp;
         end
 
         function H = Step(obj, RxSignal, InstChannelParams) % TxSignal, FadedSignal)
@@ -108,7 +110,8 @@ classdef ClassChEstimator < handle
                     % Определяю позиции пилотов и переданные значения
                         startIdx = (ps - 1) * obj.NumPCperSym + 1;
                         endIdx   =  ps      * obj.NumPCperSym;
-                        txPilots = obj.PilotSyms(startIdx : endIdx);
+                        txPilots = obj.PilotAmp * ...
+                            obj.PilotSyms(startIdx : endIdx);
 
                         if ismember(symIdx, obj.PilotNumbersOdd)
                             pPosLocal = pIdxLocal;
