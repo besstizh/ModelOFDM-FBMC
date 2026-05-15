@@ -170,6 +170,23 @@ function Sig = SetParamsSig(inSig, ParamsNumber, ...
     % Пересохраним входные данные
         Sig = inSig;
 
+    % Тип сигнала: 'OFDM' | 'FBMC'
+        if ~isfield(Sig, 'WaveformType')
+            Sig.WaveformType = 'OFDM';
+        end
+
+    % Параметры FBMC (используются только при WaveformType = 'FBMC')
+        if strcmp(Sig.WaveformType, 'FBMC')
+            % Коэффициент перекрытия 
+                if ~isfield(Sig, 'OverlapFactor')
+                    Sig.OverlapFactor = 4;
+                end
+            % Имя прототипного фильтра
+                if ~isfield(Sig, 'PrototypeFilter')
+                    Sig.PrototypeFilter = 'IOTA';
+                end
+        end
+
     % Нужно ли выполнять формирование сигнала и выполнять его обработку
     % при приёме
         if ~isfield(Sig, 'isTransparent')
