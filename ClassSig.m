@@ -114,9 +114,9 @@ classdef ClassSig < handle
 
             % Разветвление на тип сигнала 
                 if strcmp(obj.WaveformType, 'FBMC')
-                    OutData = obj.assembleOFDMFrame(Spectrum);
-                else
                     OutData = obj.assembleFBMCFrame(Spectrum);
+                else
+                    OutData = obj.assembleOFDMFrame(Spectrum);
                 end
         end
 
@@ -264,7 +264,9 @@ classdef ClassSig < handle
         end
 
         function taps = generateIOTA(obj)
-            % Пока пустой
+            % Заглушка
+            len = obj.OverlapFactor * obj.NumFFT;
+            taps = ones(len, 1);
         end
     end     % Конец блока methods (private)
 end
