@@ -126,51 +126,15 @@ classdef ClassSig < handle
                 return
             end
 
-            % Reshape: столбец - символ OFDM
-                RxFrame = ...
-                    reshape(InData(:), obj.NumFFT + obj.LenCP, obj.LenFrame);
+            % Разветвление на тип сигнала 
+             if strcmp(obj.WaveformType, 'FBMC')
+                 GridFD = obj.fbmcToGrid(InData);
+             else
+                 GridFD = obj.ofdmToGrid(InData);
+             end 
 
-            % Выделение памяти 
-                NumDCperFrame = obj.CutNumDCperSym * length(obj.pilotFlags) + ...
-                                obj.NumSC * (obj.LenFrame - length(obj.pilotFlags));
-                RxDataSyms    = zeros(NumDCperFrame, 1);
-                NoiseVar  = zeros( size( RxDataSyms ) );
-
-                Pntr     = 1;
-                pFlagIdx = 1;
-
-            for symIdx = 1 : obj.LenFrame
-                % Удаление CP и FFT 
-                    Sym   = RxFrame( obj.LenCP + 1 : end, symIdx );
-                    fdSym = fftshift( fft( Sym ) ) / sqrt(obj.NumFFT);
-
-                if ismember(symIdx, obj.pilotFlags)
-                    allIdx   = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
-
-                    if ismember(symIdx, obj.PilotNumbersOdd)
-                        dataIdx = setdiff(allIdx, obj.pIdx);
-                    else
-                        dataIdx = setdiff(allIdx, obj.pIdxShift);
-                    end
-
-                    RxDataSyms(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
-                        fdSym(dataIdx) / obj.DataAmpOnPilotSym;
-                    NoiseVar(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
-                        NoiseVarIn(dataIdx - obj.NumGI, symIdx) / obj.DataAmpOnPilotSym^2;
-
-                    pFlagIdx = pFlagIdx + 1;
-                    Pntr = Pntr + obj.CutNumDCperSym; 
-                else
-                    scIdxs = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
-                    RxDataSyms(Pntr : Pntr + obj.NumSC - 1) = fdSym(scIdxs);
-                    NoiseVar(Pntr : Pntr + obj.NumSC - 1) = ...
-                        NoiseVarIn(:, symIdx);                    
-
-                    Pntr = Pntr + obj.NumSC; 
-                end
-            end
-
-            OutData = RxDataSyms;     
+             % Общая для FBMC, OFDM часть
+                [OutData, NoiseVar] = obj.extractDataFromGrid(GridFD, NoiseVarIn);
         end
     end
 
@@ -234,11 +198,11 @@ classdef ClassSig < handle
         end
 
         function Frame = assembleFBMCFrame(obj, Spectrum)
-            % FBMC кадр: 
-            % 1. IFFT
-            % 2. Повтор M раз
-            % 3. Умножение на прототипный фильтр 
-            % 4. Перекрытие 
+        % FBMC кадр: 
+        % 1. IFFT
+        % 2. Повтор M раз
+        % 3. Умножение на прототипный фильтр 
+        % 4. Перекрытие 
             M     = obj.OverlapFactor;
             N     = obj.NumFFT;
             Frame = zeros(1, obj.FrameLenSamples);
@@ -259,14 +223,143 @@ classdef ClassSig < handle
                 case 'IOTA'
                     taps = obj.generateIOTA();
                 otherwise
-                    error('Неизвестный PrototypeFilter: %s', obj.PrototypeFilter);
+                    error('PrototypeFilter: %s', obj.PrototypeFilter);
             end
         end
 
         function taps = generateIOTA(obj)
             % Заглушка
-            len = obj.OverlapFactor * obj.NumFFT;
-            taps = ones(len, 1);
+            % len = obj.OverlapFactor * obj.NumFFT;
+            % taps = ones(len, 1);
+
+            M = obj.OverlapFactor;
+            N = obj.NumFFT;
+
+            % Односторонние коэффициенты IOTA
+                HkOneSided = [-0.875450, 0.481361, -0.163639, 0.0343042, ...
+                       0.013840, -0.019876, 0.016883, -0.007068, ...
+                       0.002515, 0.000209];
+
+            % Полный симметричный набор 
+                Hk = [ fliplr(HkOneSided), 1, HkOneSided ];
+
+            % Размещение коэффициентов в центре спектра длины M*N с нулями 
+                Lpad = N*M/2 - length( HkOneSided );
+                Sp = [ zeros(1, Lpad), Hk, zeros(1, Lpad - 1) ];
+                
+            % IFFT
+                Pulse = ifft( ifftshift( Sp ) );
+
+            % Перевод в столбец
+                Pulse = Pulse(:);
+
+            % Нормировка
+                Pulse = Pulse / max( abs( Pulse ) );
+
+            taps = Pulse;
+        end
+
+        function GridFD = ofdmToGrid(obj, InData)
+        % OFDM прием: 
+        % 1. reshape 
+        % 2. Удаление CP
+        % 3. FFT с нормировкой 
+        % Возвращает матрицу [NumFFT, LenFrame] в частотной области 
+            RxFrame = ...
+                    reshape(InData(:), obj.NumFFT + obj.LenCP, obj.LenFrame);
+            GridFD = zeros(obj.NumFFT, obj.LenFrame);
+
+            for symIdx = 1 : obj.LenFrame
+                % Удаление CP
+                Sym   = RxFrame( obj.LenCP + 1 : end, symIdx );
+                GridFD(:, symIdx) = fftshift( fft(Sym) ) / sqrt(obj.NumFFT);
+            end
+        end
+
+        function GridFD = fbmcToGrid(obj, InData)
+        % FBMC прием: 
+        % 1. Беру окно длиной M * NumFFT 
+        % 2. Согласованная фильтрация
+        % 3. FFT длины M * NumFFT
+        % 4. Прореживаю спектр в M раз 
+        % 5. Получаю ресурсную сетку [NumFFT, LenFrame]
+            M = obj.OverlapFactor;
+            N = obj.NumFFT;
+
+            InData = InData(:); % на всякий случай 
+            GridFD = zeros(N, obj.LenFrame);
+
+            % for symIdx = 1 : obj.LenFrame
+            %     % Окно во времени, начинается с (symIdx - 1) * N
+            %         offset   = (symIdx - 1) * N;
+            %         window   = InData(offset + 1 : offset + M*N);
+            %     % Согласованная фильтрация
+            %         filtered = window .* obj.FilterTaps;
+            %     % FFT
+            %         fdLong   = fftshift( fft( filtered ) ) / sqrt(N);
+            %     % Прореживание: каждый M-й бит
+            %         dc_long  = M*N/2 + 1;
+            %         % Индексы N точек: от dc_long - (N/2)*M с шагом M
+            %         idx      = dc_long + (-N/2 : N/2 - 1) * M;
+            %         GridFD(:, symIdx) = fdLong(idx);
+            % end
+
+            G   = reshape(obj.FilterTaps, N, M);
+            den = sum(G .^ 2, 2);
+
+            for symIdx = 1 : obj.LenFrame
+                offset = (symIdx - 1) * N;
+                window = InData(offset + 1 : offset + M*N);
+
+                R   = reshape(window, N, M);
+                num = sum(R .* G, 2);
+                tdSym_hat = M * num ./ den;
+
+                GridFD(:, symIdx) = fftshift( fft(tdSym_hat) ) / sqrt(N);
+            end
+        end
+
+        function [OutData, NoiseVar] = extractDataFromGrid(obj, GridFD, NoiseVarIn)
+        % Извлечение данных и пилотов из частотной сетки 
+            % Выделение памяти 
+            NumDCperFrame = obj.CutNumDCperSym * length(obj.pilotFlags) + ...
+                            obj.NumSC * (obj.LenFrame - length(obj.pilotFlags));
+            RxDataSyms    = zeros(NumDCperFrame, 1);
+            NoiseVar  = zeros( size( RxDataSyms ) );
+
+            Pntr     = 1;
+            pFlagIdx = 1;
+
+            for symIdx = 1 : obj.LenFrame
+                fdSym = GridFD(:, symIdx);
+
+                if ismember(symIdx, obj.pilotFlags)
+                    allIdx   = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
+
+                    if ismember(symIdx, obj.PilotNumbersOdd)
+                        dataIdx = setdiff(allIdx, obj.pIdx);
+                    else
+                        dataIdx = setdiff(allIdx, obj.pIdxShift);
+                    end
+
+                    RxDataSyms(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
+                        fdSym(dataIdx) / obj.DataAmpOnPilotSym;
+                    NoiseVar(Pntr : Pntr + obj.CutNumDCperSym - 1) = ...
+                        NoiseVarIn(dataIdx - obj.NumGI, symIdx) / obj.DataAmpOnPilotSym^2;
+
+                    pFlagIdx = pFlagIdx + 1;
+                    Pntr = Pntr + obj.CutNumDCperSym; 
+                else
+                    scIdxs = obj.NumGI + 1 : obj.NumFFT - obj.NumGI;
+                    RxDataSyms(Pntr : Pntr + obj.NumSC - 1) = fdSym(scIdxs);
+                    NoiseVar(Pntr : Pntr + obj.NumSC - 1) = ...
+                        NoiseVarIn(:, symIdx);                    
+
+                    Pntr = Pntr + obj.NumSC; 
+                end
+            end
+
+            OutData = RxDataSyms;
         end
     end     % Конец блока methods (private)
 end
