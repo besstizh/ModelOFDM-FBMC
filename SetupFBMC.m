@@ -28,7 +28,7 @@
 Mapper.isTransparent      = false;
 Encoder.isTransparent     = false;
 Interleaver.isTransparent = false;
-Channel.isTransparent     = true;
+Channel.isTransparent     = false;
 Channel.Type              = 'AWGN';
 Mapper.ModulationOrder    = 16;
 Mapper.DecisionMethod     = 'Approximate log-likelihood ratio';
@@ -46,5 +46,5 @@ BER.h2dBMax            = 20;
 Common.NumWorkers       = 6;
 Common.NumOneIterFrames = 120;
 Common.SaveDirName      = 'Bufer_OFDM_FBMC';
-Common.SaveFileName     = 'FBMC_AWGN';
+Common.SaveFileName     = 'FBMC_AWGN_On';
 

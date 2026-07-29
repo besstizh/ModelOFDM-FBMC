@@ -236,12 +236,19 @@ classdef ClassSig < handle
             N = obj.NumFFT;
 
             % Односторонние коэффициенты IOTA
-                HkOneSided = [-0.875450, 0.481361, -0.163639, 0.0343042, ...
-                       0.013840, -0.019876, 0.016883, -0.007068, ...
-                       0.002515, 0.000209];
+                % HkOneSided = [-0.875450, 0.481361, -0.163639, 0.0343042, ...
+                %       0.013840, -0.019876, 0.016883, -0.007068, ...
+                %       0.002515, 0.000209];
+
+                HkOneSided = [  9.9975556751297368e-01   ...
+                    6.5920965840958623e-01  -1.1841742623999482e-01   ...
+                    1.6741167183333790e-02   7.3290399681881654e-02  ...
+                    -1.7314088694931531e-01  -8.0718159213293630e-03  ...
+                    -5.9276750624914750e-03   5.6762577289995501e-02];
 
             % Полный симметричный набор 
-                Hk = [ fliplr(HkOneSided), 1, HkOneSided ];
+                Hk = [ fliplr(HkOneSided), 1.0128740774848271e+00 , ...
+                    HkOneSided ];
 
             % Размещение коэффициентов в центре спектра длины M*N с нулями 
                 Lpad = N*M/2 - length( HkOneSided );
@@ -250,11 +257,15 @@ classdef ClassSig < handle
             % IFFT
                 Pulse = ifft( ifftshift( Sp ) );
 
+            % Центрирование импульса
+                [~, pk] = max(abs(Pulse));
+                Pulse = circshift(Pulse, round(M*N/2) - pk);
+
             % Перевод в столбец
                 Pulse = Pulse(:);
 
             % Нормировка
-                Pulse = Pulse / max( abs( Pulse ) );
+                Pulse = Pulse / norm( Pulse ) * sqrt(M * N);
 
             taps = Pulse;
         end
@@ -289,33 +300,19 @@ classdef ClassSig < handle
             InData = InData(:); % на всякий случай 
             GridFD = zeros(N, obj.LenFrame);
 
-            % for symIdx = 1 : obj.LenFrame
-            %     % Окно во времени, начинается с (symIdx - 1) * N
-            %         offset   = (symIdx - 1) * N;
-            %         window   = InData(offset + 1 : offset + M*N);
-            %     % Согласованная фильтрация
-            %         filtered = window .* obj.FilterTaps;
-            %     % FFT
-            %         fdLong   = fftshift( fft( filtered ) ) / sqrt(N);
-            %     % Прореживание: каждый M-й бит
-            %         dc_long  = M*N/2 + 1;
-            %         % Индексы N точек: от dc_long - (N/2)*M с шагом M
-            %         idx      = dc_long + (-N/2 : N/2 - 1) * M;
-            %         GridFD(:, symIdx) = fdLong(idx);
-            % end
-
-            G   = reshape(obj.FilterTaps, N, M);
-            den = sum(G .^ 2, 2);
-
             for symIdx = 1 : obj.LenFrame
-                offset = (symIdx - 1) * N;
-                window = InData(offset + 1 : offset + M*N);
-
-                R   = reshape(window, N, M);
-                num = sum(R .* G, 2);
-                tdSym_hat = M * num ./ den;
-
-                GridFD(:, symIdx) = fftshift( fft(tdSym_hat) ) / sqrt(N);
+                % Окно во времени, начинается с (symIdx - 1) * N
+                    offset   = (symIdx - 1) * N;
+                    window   = InData(offset + 1 : offset + M*N);
+                % Согласованная фильтрация
+                    filtered = window .* obj.FilterTaps;
+                % FFT
+                    fdLong   = fftshift( fft( filtered ) ) / sqrt(N);
+                % Прореживание: каждый M-й бит
+                    dc_long  = M*N/2 + 1;
+                % Индексы N точек: от dc_long - (N/2)*M с шагом M
+                    idx      = dc_long + (-N/2 : N/2 - 1) * M;
+                    GridFD(:, symIdx) = fdLong(idx);
             end
         end
 
